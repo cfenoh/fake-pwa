@@ -1,21 +1,17 @@
-import { useState } from 'react'
+import {FC, useEffect, useState} from 'react'
 import logo from './logo.svg'
 import './App.css'
 import ReloadPrompt from "./ReloadPrompt";
 
 function App() {
-  const [count, setCount] = useState(0)
+
 
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>Hello my fake pwa</p>
-        <p>
-          <button type="button" onClick={() => setCount((count) => count + 1)}>
-            count is: {count}
-          </button>
-        </p>
+        <Wallets/>
         <p>
           created by <code>Cfenoh</code>
         </p>
@@ -26,3 +22,25 @@ function App() {
 }
 
 export default App
+
+type IWallet = {
+  id:string;
+  name:string;
+}
+const Wallets:FC = ()=>{
+  const [wallets, setWallets] = useState<IWallet[]|[] >([])
+
+  useEffect(()=>{
+    fetch('https://ff19-96-22-128-7.ngrok.io/enveloppes').then((walletsRaw)=> walletsRaw.json()).then((wallets)=>{
+      setWallets(wallets)
+    })
+  },[])
+
+  if(!wallets) return null
+
+  return (<ul>
+    {
+        wallets.map((wallet)=>(<li key={wallet.id}>{wallet.name}</li>))
+    }
+  </ul>)
+}
